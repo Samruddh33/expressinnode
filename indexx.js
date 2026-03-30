@@ -3,34 +3,58 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
-// middleware
-app.use(express.json());
+app.use(expresss.json());
 
-// fake database
 let students = [
-    { id: 1, name: "adityay", course: "MERN" },
-    { id: 2, name: "adii", course: "NODE" }
+    { id: 1, name: "Alice", grade: "A" },
+    { id: 2, name: "Bob", grade: "B" },
+    { id: 3, name: "Charlie", grade: "A" },
+    { id: 4, name: "Diana", grade: "C" }
 ];
 
-// GET student by id
-app.get('/student/:id', (req, res) => {
-    const student = students.find(s => s.id == req.params.id);
+app.get('/students', (req, res) => {
+    res.json(students);
+});
 
-    if (student) {
-        res.json(student);
-    } else {
-        res.status(404).json({ message: "student not found" });
+
+app.get('/students', (req, res) => {
+    const student = students.find(s => s.id === parseInt(req.params.id));
+
+    if (!students) {
+        return res.status(404).send('Student not found');
     }
+
+    res.send(student);
 });
 
-// POST new student
-app.post('/student', (req, res) => {
-    const newStudent = req.body;
+app.post('/students', (req, res) => {
+    const { name, grade } = req.body;
+
+    if (!name || !grade) {  
+        return res.status(400).json({ messages: "Name and grade are required" });
+    }
+
+    const newStudent = { id: students.length + 1, name, grade };
     students.push(newStudent);
-    res.status(201).json(newStudent);
+    res.status(201).json(newStudent);    
 });
 
-// START SERVER
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.put('/students/:id', (req, res) => {
+    const student = students.find(s => s.id === parseInt(req.params.id));
+
+    if (!student) {
+        return res.status(404).send('Student not found');
+    }
+
+    const { name, grade } = req.body; if (!name || !grade) {} else {} {
+        student.name = name;
+        student.grade = grade;
+    }
+
+    res.json(student);
 });
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
